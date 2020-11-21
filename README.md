@@ -11,5 +11,5 @@ yarn install
 
 ## Commands
 
-`yarn bazelisk run //:k8s` to generate kubernetes production configurations
-`yarn bazelisk run //:microk8s` to generate kubernetes staging configurations
+- `yarn bazelisk run //:k8s` to generate kubernetes production configurations
+- `yarn bazelisk run //:microk8s` to generate kubernetes staging configurations
