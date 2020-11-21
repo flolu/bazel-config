@@ -1,5 +1,5 @@
 workspace(
-    name = "config",
+    name = "bazel_config",
     managed_directories = {"@npm": ["node_modules"]},
 )
 

@@ -16,6 +16,7 @@ ts_library(
     srcs = glob(["**/*.ts"]),
     deps = [
         "@npm//@types/node",
+        "@npm//ts-morph",
         "@npm//yaml",
     ],
 )
@@ -113,7 +114,7 @@ genrule(
     tools = [":generate_client_env_bin"],
 )
 
-# ts_library(
-#     name = "client_environment",
-#     srcs = ["client.environment.ts"],
-# )
+ts_library(
+    name = "client_environment",
+    srcs = ["client.environment.ts"],
+)
