@@ -1,5 +1,7 @@
 load("@npm//@bazel/typescript:index.bzl", "ts_library")
 load("@build_bazel_rules_nodejs//:index.bzl", "nodejs_binary")
+load("@k8s_deploy//:defaults.bzl", "k8s_deploy")
+load("@microk8s_deploy//:defaults.bzl", "microk8s_deploy")
 
 ENVIRONMENTS = [
     "dev",
@@ -38,4 +40,14 @@ genrule(
     outs = ["%s.config.yaml" % s for s in ENVIRONMENTS],
     cmd = "$(location generate_k8s_config_bin) $(RULEDIR)",
     tools = [":generate_k8s_config_bin"],
+)
+
+k8s_deploy(
+    name = "config",
+    template = ":prod.config.yaml",
+)
+
+microk8s_deploy(
+    name = "microk8s_config",
+    template = ":staging.config.yaml",
 )

@@ -4,6 +4,7 @@ import * as yaml from 'yaml'
 
 const ruleDir = process.argv[2]
 const configsDir = 'configs'
+const configSuffix = '.config.yaml'
 
 function flattenObject(object: any) {
   const toReturn = {}
@@ -41,7 +42,7 @@ async function main() {
       const {$schema, ...config} = JSON.parse(configStr.toString())
       const flat = flattenObject(config)
       const content = yaml.stringify(k8sConfig(flat))
-      const outFile = `${file.split('.')[0]}.config.yaml`
+      const outFile = `${file.split('.')[0]}${configSuffix}`
       await fs.promises.writeFile(path.join(ruleDir, outFile), content)
     }),
   )
