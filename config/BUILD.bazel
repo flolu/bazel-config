@@ -3,6 +3,8 @@ load("@build_bazel_rules_nodejs//:index.bzl", "nodejs_binary")
 load("@k8s_deploy//:defaults.bzl", "k8s_deploy")
 load("@microk8s_deploy//:defaults.bzl", "microk8s_deploy")
 
+package(default_visibility = ["//visibility:public"])
+
 ENVIRONMENTS = [
     "dev",
     "staging",
@@ -10,8 +12,8 @@ ENVIRONMENTS = [
 ]
 
 ts_library(
-    name = "generate_k8s_config_lib",
-    srcs = ["generate-k8s-config.ts"],
+    name = "generate_lib",
+    srcs = glob(["**/*.ts"]),
     deps = [
         "@npm//@types/node",
         "@npm//yaml",
@@ -19,27 +21,51 @@ ts_library(
 )
 
 filegroup(
-    name = "configs",
+    name = "config_jsons",
     srcs = glob(
         include = ["configs/*"],
         exclude = ["**/*.schema.json"],
     ),
 )
 
+filegroup(
+    name = "secrets_jsons",
+    srcs = glob(
+        include = ["secrets/*"],
+        exclude = ["**/*.schema.json"],
+    ),
+)
+
 nodejs_binary(
-    name = "generate_k8s_config_bin",
+    name = "generate_k8s_configs_bin",
     data = [
-        ":configs",
-        ":generate_k8s_config_lib",
+        ":config_jsons",
+        ":generate_lib",
     ],
-    entry_point = "generate-k8s-config.ts",
+    entry_point = "generate-k8s-configs.ts",
 )
 
 genrule(
-    name = "generate_k8s_config",
+    name = "generate_k8s_configs",
     outs = ["%s.config.yaml" % s for s in ENVIRONMENTS],
-    cmd = "$(location generate_k8s_config_bin) $(RULEDIR)",
-    tools = [":generate_k8s_config_bin"],
+    cmd = "$(location generate_k8s_configs_bin) $(RULEDIR)",
+    tools = [":generate_k8s_configs_bin"],
+)
+
+nodejs_binary(
+    name = "generate_k8s_secrets_bin",
+    data = [
+        ":generate_lib",
+        ":secrets_jsons",
+    ],
+    entry_point = "generate-k8s-secrets.ts",
+)
+
+genrule(
+    name = "generate_k8s_secrets",
+    outs = ["%s.secrets.yaml" % s for s in ENVIRONMENTS],
+    cmd = "$(location generate_k8s_secrets_bin) $(RULEDIR)",
+    tools = [":generate_k8s_secrets_bin"],
 )
 
 k8s_deploy(
@@ -50,4 +76,14 @@ k8s_deploy(
 microk8s_deploy(
     name = "microk8s_config",
     template = ":staging.config.yaml",
+)
+
+k8s_deploy(
+    name = "secrets",
+    template = ":prod.secrets.yaml",
+)
+
+microk8s_deploy(
+    name = "microk8s_secrets",
+    template = ":staging.secrets.yaml",
 )

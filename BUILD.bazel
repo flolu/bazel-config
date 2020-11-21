@@ -1,31 +1,19 @@
-# load("@io_bazel_rules_k8s//k8s:objects.bzl", "k8s_objects")
+load("@io_bazel_rules_k8s//k8s:objects.bzl", "k8s_objects")
 
 exports_files(["tsconfig.json"])
 
-# k8s_objects(
-#     name = "k8s",
-#     objects = [
-#         "//packages/kubernetes:k8s",
-#         "//services/gateway:k8s",
-#         "//services/file:k8s",
-#         "//services/auth/write:k8s",
-#         "//services/user/write:k8s",
-#         "//services/user/read:k8s",
-#         "//services/model/write:k8s",
-#         "//services/model/read:k8s",
-#     ],
-# )
+k8s_objects(
+    name = "k8s",
+    objects = [
+        "//config:config",
+        "//config:secrets",
+    ],
+)
 
-# k8s_objects(
-#     name = "microk8s",
-#     objects = [
-#         "//packages/kubernetes:microk8s",
-#         "//services/gateway:microk8s",
-#         "//services/file:microk8s",
-#         "//services/auth/write:microk8s",
-#         "//services/user/write:microk8s",
-#         "//services/user/read:microk8s",
-#         "//services/model/write:microk8s",
-#         "//services/model/read:microk8s",
-#     ],
-# )
+k8s_objects(
+    name = "microk8s",
+    objects = [
+        "//config:microk8s_config",
+        "//config:microk8s_secrets",
+    ],
+)
