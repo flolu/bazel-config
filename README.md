@@ -15,3 +15,4 @@ yarn install
 - `yarn k8s:staging` to generate kubernetes staging configurations
 - `yarn client:dev` to generate client `dev` environment
 - `yarn client:prod` to generate client `prod` environment
+- `yarn dev` generates .env file and starts docker-compose

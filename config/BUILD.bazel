@@ -118,3 +118,21 @@ ts_library(
     name = "client_environment",
     srcs = ["client.environment.ts"],
 )
+
+# DOCKER COMPOSE ENVIRONMENT VARIABLES
+nodejs_binary(
+    name = "generate_docker_compose_env_bin",
+    data = [
+        ":config_jsons",
+        ":generate_lib",
+        ":secrets_jsons",
+    ],
+    entry_point = "generate-dc-env.ts",
+)
+
+genrule(
+    name = "generate_docker_compose_env",
+    outs = ["docker-compose.env"],
+    cmd = "$(location generate_docker_compose_env_bin) $@",
+    tools = [":generate_docker_compose_env_bin"],
+)

@@ -2,16 +2,13 @@ import * as fs from 'fs'
 import * as path from 'path'
 import {Project, ts} from 'ts-morph'
 
+import {readConfig} from './utils'
+
 const ruleDir = process.argv[2]
 const environment = process.argv[3]
-const configsDir = 'configs'
-const configSuffix = '.config.json'
 
 async function main() {
-  const file = `${environment}${configSuffix}`
-  const configStr = await fs.promises.readFile(path.join(__dirname, configsDir, file))
-  const {$schema, ...config} = JSON.parse(configStr.toString())
-
+  const config = await readConfig(environment)
   const project = new Project()
   const tsFile = project.createSourceFile('file.ts', `export const environment = {};`)
   const objLiteral = tsFile
