@@ -1,0 +1,41 @@
+load("@npm//@bazel/typescript:index.bzl", "ts_library")
+load("@build_bazel_rules_nodejs//:index.bzl", "nodejs_binary")
+
+ENVIRONMENTS = [
+    "dev",
+    "staging",
+    "prod",
+]
+
+ts_library(
+    name = "generate_k8s_config_lib",
+    srcs = ["generate-k8s-config.ts"],
+    deps = [
+        "@npm//@types/node",
+        "@npm//yaml",
+    ],
+)
+
+filegroup(
+    name = "configs",
+    srcs = glob(
+        include = ["configs/*"],
+        exclude = ["**/*.schema.json"],
+    ),
+)
+
+nodejs_binary(
+    name = "generate_k8s_config_bin",
+    data = [
+        ":configs",
+        ":generate_k8s_config_lib",
+    ],
+    entry_point = "generate-k8s-config.ts",
+)
+
+genrule(
+    name = "generate_k8s_config",
+    outs = ["%s.config.yaml" % s for s in ENVIRONMENTS],
+    cmd = "$(location generate_k8s_config_bin) $(RULEDIR)",
+    tools = [":generate_k8s_config_bin"],
+)

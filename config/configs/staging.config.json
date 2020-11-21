@@ -1,0 +1,9 @@
+{
+  "$schema": "./config.schema.json",
+  "environment": "staging",
+  "api": "http://api.localhost",
+  "database": {
+    "host": "database-svc.mongodb.svc.cluster.local:27017",
+    "user": "admin"
+  }
+}
